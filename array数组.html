@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>js数组方法练习</title>
+    <style>
+    </style>
+</head>
+<script>
+    // js Array 数组方法
+
+    // 1 创建数据
+    var arr = [];
+    var arr = new Array()
+
+    // join() 将数组转换成字符串 （原数组不变）
+    var arr1 = [1, 2, 3, 4];
+    console.log("数组变为字符串，以,号分开", arr1.join())
+    console.log("数组变为字符串，不添加任何东西", arr1.join(""))
+
+    // push() 和 pop() （原数组改变）
+    var arr2 = [1, 2, 3, 4];
+    console.log("push 接收任意参数，将它们逐个添加到数组末尾，并返回数组长度", arr2.push(5))
+    console.log("pop 数据末尾移除最后一项，减少数组的length，返回移除的项", arr2.pop())
+
+    // shift 和 unshift() (原数组改变)
+    var arr3 = [1, 2, 3, 4];
+    console.log("shift() 删除原数组第一项，并返回删除元素的值，如果数组为空则返回undefind", arr3.shift())
+    var arr4 = [1, 2, 3, 4];
+    console.log("unshift 将参数添加到原数组开头，并返回数组的长度", arr4.unshift(0), arr4)
+
+    // sort （原数组改变）
+    // 默认会按字符串去排序，会将数组中所有元素都转换成字符串，就算里面是数字也会转换
+    var arr1 = ["a", "c", "b", "d",]
+    console.log("默认字符串排序", arr1.sort())    // ["a", "b", "c", "d"]
+    var arr2 = [13, 24, 51, 3]
+    console.log("按第一个数字进行排序", arr2.sort())
+    // 升序 [3, 13, 24, 51]
+    arr2.sort(function (a, b) {
+        return a - b
+    })
+
+    // 降序 [51, 24, 13, 3]
+    arr2.sort(function (a, b) {
+        return b - a;
+    })
+
+    // slice() 从已有的数组中返回选定的数据（原数组不变）
+    var arr1 = [1, 2, 3, 4, 5];
+    console.log("返回从原数组中指定开始下标到结束下标之间的项、组成新的数组，可以接收2个参数、开始下标、结束下标", arr1.slice(3, 4))
+    console.log("如果只给定一个参数则返回从开始下标到最后一个下标", arr1.slice(3))
+
+    // splice() (原数组改变)
+    var arr1 = [1, 2, 3, 4, 5];
+    console.log("删除，删除任意数量的项，2个参数，要删除第一项的位置和要删除的项数, 返回删除项", arr1.splice(0, 3), "原目标数组：", arr1)
+    var arr2 = [1, 2, 3, 4, 5];
+    console.log("插入，向指定位置插入任意数量的项，3个参数，起始位置、要删除的项数，要插入的项目", arr3.splice(0, 0, "a", "b", "v"), "原目标数组：", arr2)
+    var arr3 = [1, 2, 3, 4, 5];
+    console.log("替换，向指定位置插入任意数量的项，3个参数，起始位置、要删除的项数，要插入的项目任意多个", arr2.splice(0, 3, "a"), "原目标数组：", arr3)
+
+    // indexOf() 和 lastIndexOf()
+    var fruits = ["Banana", "Orange", "Apple", "Mango"];
+    console.log("接收1个或者两个参数，要查找的项和表示查找开始起点位置索引，默认从头开始，返回所在索引", fruits.indexOf("Apple"))
+    console.log("接收1个或者两个参数，要查找的项和表示查找开始起点位置索引，默认从末尾开始，返回所在索引", fruits.lastIndexOf("Apple"))
+
+    // map() （原数组不变）
+    var arr = [1, 2, 3, 4, 5];
+    var arr1 = arr.map(function (item) {
+        return item * item
+    })
+    console.log("映射，对数组中的每一项运行给定的函数，返回每次函数调用后结果组成的数组", arr1)
+
+    // filter() （原数组不变）
+    var arr = [1, 2, 3, 4, 5];
+    var arr1 = arr.filter(function (item) {
+        return item > 3;
+    })
+    console.log("过滤，返回满足过滤条件的数据组成的数据", arr1)
+
+    // reverse （原数组改变）
+    var arr = [1, 2, 3];
+    console.log("数组反转", arr.reverse(arr))
+
+    // isArray
+    var arr = [];
+    console.log("判断一个对象是否为数组", Array.isArray(arr))
+
+    // concat (原数组不改变)
+    var arr = [1, 2, 3]
+    console.log("该方法连接两个或者多个数组，返回组成后的新数组", arr.concat("111"))
+</script>
+
+<body>
+    <h1>js数组方法练习</h1>
+</body>
+
+</html>

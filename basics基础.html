@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>js基础总结</title>
+    <style>
+    </style>
+</head>
+<script>
+    /** 
+        this的几种使用场景
+    **/
+    // 全局上下文中的this  this 等于 window
+    var a = 1;
+    console.log(this == window); // true
+
+    // 一般函数中的this 非严格模式下 this = window 
+    function f() {
+        return this;
+    }
+    console.log(f() == window); // true
+
+    function f1() {
+        "use srict" // 死吹可特儿
+        return this;
+    }
+    console.log(f1() == window) // false
+
+</script>
+
+<body>
+    <h1>js基础总结</h1>
+</body>
+
+</html>

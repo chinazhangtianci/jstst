@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    </style>
+</head>
+<script>
+    let selection = 290;
+    let oldMenus = [
+        {
+            id: "111",
+            name: "asu",
+            children: [
+                {
+                    id: "999",
+                    name: "xxx",
+                    sex: 18
+                },
+                {
+                    id: "932",
+                    name: "yyy",
+                    sex: 19
+                },
+                {
+                    id: "29",
+                    name: "ppp",
+                    sex: 22
+                }
+            ]
+        },
+        {
+            id: "222",
+            name: "as1",
+            children: [
+                {
+                    id: "290",
+                    name: "mmm",
+                    sex: 22
+                },
+                {
+                    id: "421",
+                    name: "iiii",
+                    sex: 13
+                },
+                {
+                    id: "090",
+                    name: "ppyy",
+                    sex: 25
+                }
+            ]
+        },
+        {
+            id: "333",
+            name: "2su",
+            children: [
+                {
+                    id: "129",
+                    name: "qqw",
+                    sex: 33
+                },
+                {
+                    id: "998",
+                    name: "cxdd",
+                    sex: 31
+                },
+                {
+                    id: "12",
+                    name: "sis",
+                    sex: 16
+                }
+            ]
+        },
+    ]
+
+    function start(data) {
+        return new Promise((resolve, reject) => {
+            function returnData(obj) {
+                if (obj.id == selection) {
+                    resolve(obj)
+                }
+            }
+            function filterObj(obj) {
+                returnData(obj);
+                if (obj.children && obj.children.length > 0) {
+                    for (let i = 0; i < obj.children.length; i++) {
+                        filterObj(obj.children[i])
+                    }
+                }
+            }
+            for (let i = 0; i < data.length; i++) {
+                filterObj(data[i])
+            }
+        })
+    }
+
+    start(oldMenus).then(function (res) {
+        console.log(res)
+    })
+
+
+    // function start(data) {
+    //     return new Promise((resolve, reject) => {
+    //         function returnData(obj) {
+    //             if (obj.id == selection) {
+    //                 resolve(obj)
+    //             }
+    //         };
+
+    //         function folterData(obj) {
+    //             returnData(obj);
+    //             if (obj.children && obj.children.length > 0) {
+    //                 for (let i = 0; i < obj.children.length; i++) {
+    //                     folterData(obj.children[i])
+    //                 }
+    //             }
+    //         };
+
+    //         for (let i = 0; i < data.length; i++) {
+    //             folterData(data[i])
+    //         }
+    //     })
+    // }
+
+    // start(oldMenus).then(function (res) {
+    //     console.log("res --- >", res)
+    // })
+
+    let p = {
+        name: "xxx",
+        f: function () {
+            console.log(1)
+        },
+        b: undefined
+    }
+
+    function deepCopy(obj) {
+        let res = Array.isArray(obj) ? [] : {};
+        for (let key in obj) {
+            if (typeof obj[key] == "Object") {
+                res[key] = deepCopy(obj[key])
+            } else {
+                res[key] = obj[key]
+            }
+        }
+        return res;
+    }
+
+    console.log(deepCopy(p))
+
+    var aTree = [
+        { "id": "1", "name": "动物", "pid": "0" },
+        { "id": "2", "name": "鸟类", "pid": "5" },
+        { "id": "3", "name": "无脊椎动物", "pid": "1" },
+        { "id": "4", "name": "哺乳动物", "pid": "5" },
+        { "id": "5", "name": "脊椎动物", "pid": "1" },
+        { "id": "6", "name": "喜鹊", "pid": "2" },
+        { "id": "7", "name": "蚯蚓", "pid": "3" },
+        { "id": "8", "name": "植物", "pid": "0" },
+    ];
+
+    function create_tree(data, pid) {
+        pid = pid || 0;
+        let list = [];
+        data.map(function(item) {
+            if(item.pid == pid) {
+                item.children = create_tree(data, item.id);
+                list.push(item);
+            }
+        })
+        return list;
+    }
+    console.log(create_tree(aTree))
+    
+
+    // function create_tree(data, pid) {
+    //     pid = pid || 0;
+    //     var list = [];
+    //     data.map(function (item) {
+    //         if (item.pid == pid) {
+    //             item.children = create_tree(data, item.id);
+    //             list.push(item);
+    //         }
+    //     });
+
+    //     return list;
+    // }
+
+</script>
+
+<body>
+</body>
+
+</html>

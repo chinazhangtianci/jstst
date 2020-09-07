@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>js常用方法总结</title>
+    <div id="app">
+        <input type="text" id="onInput">
+        <p id="show"></p>
+    </div>
+    <a
+        href="https://blog.csdn.net/quhongqiang/article/details/80388401?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task">
+    </a>
+
+    <div class="box">函数节流用的DOM元素</div>
+    <style>
+    </style>
+</head>
+<script>
+    // https://www.cnblogs.com/kongxianghai/p/7250248.html  ES6set
+    // Vue双向数据绑定
+    var obj = {};
+    Object.defineProperty(obj, "text", {
+        set: function (newValue) {
+            document.getElementById("onInput").value = newValue;
+            document.getElementById("show").innerHTML = newValue;
+        },
+        get: function () {
+            return obj
+        }
+    })
+
+    document.addEventListener("keyup", function (e) {
+        obj.text = e.target.value;
+    })
+
+    // js es6 ...的作用
+    // 对象的深度copy
+    // 1 利用JSON.parse  JSON.stringify 来进行转换，但无法赋值 undefande 与 function
+    let person = {
+        name: 'tino',
+        say: function () {
+            console.log("hi");
+        },
+        un: undefined
+    }
+
+    let person1 = JSON.parse(JSON.stringify(person))
+    console.log("通过JSON.parse 复制的对象", person1)
+
+    // 2利用递归的方式复制对象
+    function deepCopy(obj) {
+        let res = Array.isArray(obj) ? [] : {};
+        for (let key in obj) {
+            if (typeof obj[key] == "object") {
+                res[key] = deepCopy(obj[key]);
+            } else {
+                res[key] = obj[key]
+            }
+        }
+        return res;
+    }
+    console.log("通过递归方式来复制对象", deepCopy(person))
+
+    // 递归 根据一个固定值 找到集合中的对象
+    let selection = 290;
+    let oldMenus = [
+        {
+            id: "111",
+            name: "asu",
+            children: [
+                {
+                    id: "999",
+                    name: "xxx",
+                    sex: 18
+                },
+                {
+                    id: "932",
+                    name: "yyy",
+                    sex: 19
+                },
+                {
+                    id: "29",
+                    name: "ppp",
+                    sex: 22
+                }
+            ]
+        },
+        {
+            id: "222",
+            name: "as1",
+            children: [
+                {
+                    id: "290",
+                    name: "mmm",
+                    sex: 22
+                },
+                {
+                    id: "421",
+                    name: "iiii",
+                    sex: 13
+                },
+                {
+                    id: "090",
+                    name: "ppyy",
+                    sex: 25
+                }
+            ]
+        },
+        {
+            id: "333",
+            name: "2su",
+            children: [
+                {
+                    id: "129",
+                    name: "qqw",
+                    sex: 33
+                },
+                {
+                    id: "998",
+                    name: "cxdd",
+                    sex: 31
+                },
+                {
+                    id: "12",
+                    name: "sis",
+                    sex: 16
+                }
+            ]
+        },
+    ]
+
+    function startSelect(data) {
+        let res = "";
+        function commit(obj) {
+            if (obj.id == selection) {
+                res = obj;
+            }
+        }
+
+        function filterData(obj) {
+            commit(obj);
+            if (obj.children && obj.children.length > 0) {
+                for (let i = 0; i < obj.children.length; i++) {
+                    filterData(obj.children[i])
+                }
+            }
+        }
+        
+        for (let i = 0; i < data.length; i++) {
+            filterData(data[i])
+        }
+        return res;
+    }
+    console.log("递归查找出对应的数据 --- ", startSelect(oldMenus))
+
+    // 递归构建树状结构数据
+    var aTree = [
+        { "id": "1", "name": "动物", "pid": "0" },
+        { "id": "2", "name": "鸟类", "pid": "5" },
+        { "id": "3", "name": "无脊椎动物", "pid": "1" },
+        { "id": "4", "name": "哺乳动物", "pid": "5" },
+        { "id": "5", "name": "脊椎动物", "pid": "1" },
+        { "id": "6", "name": "喜鹊", "pid": "2" },
+        { "id": "7", "name": "蚯蚓", "pid": "3" },
+        { "id": "8", "name": "植物", "pid": "0" },
+    ];
+
+    function create_Tree(data, pid) {
+        pid = pid || 0;
+        let list = [];
+        data.map(function (item) {
+            if (item.pid == pid) {
+                item.childern = create_Tree(data, item.id);
+                list.push(item)
+            }
+        })
+        return list;
+    }
+    console.log(create_Tree(aTree))
+
+    // 数组的排序
+    var arr = [90, 118, 7, 46, 15, 4, 23, 12, 1];
+    arr.sort(function (a, b) {
+        return a - b;
+    })
+    console.log("按正序排列 --- >", arr)
+    arr.sort(function (a, b) {
+        return b - a;
+    })
+    console.log("按倒序排列 --- >", arr)
+
+    // 数组的对象排序 (将下面的对象按照年龄排序、)
+    var sdts = [
+        { name: "小明", age: 12, result: 100 },
+        { name: "小红", age: 13, result: 10 },
+        { name: "小花", age: 11, result: 90 },
+        { name: "小朱", age: 12, result: 90 }
+    ]
+
+    sdts.sort(function (a, b) {
+        return a.age - b.age
+    })
+    console.log("学生对象集合 按照正序排列 --- ", sdts)
+
+    // 动态灵活排序
+    function sdtsSort(f1, f2, obj) {
+        obj.sort(function (a, b) {
+            if (b[f2] == a[f2]) { // 如果成绩相同 则按钮年龄去排序
+                return b[f1] - a[f1]
+            }
+            return b[f2] - a[f2]
+        })
+        return obj
+    }
+    console.log("学生对象集合 按照年龄排序 如果年龄相同则按成绩排序", sdtsSort("age", "result", sdts))
+
+    // 数组的反转
+    var arr = [1, 2, 3, 4, 5, 6];
+    console.log("数组的反转 --- >", arr.reverse())
+    var num = 1234567;
+    console.log("一串数字的反转 --- >", parseInt(num.toString().split("").reverse().join("")))
+
+    // 取数组中最大值  最小值
+    var arr = [11, 1, 0, 2, 3, 5];
+    // 取最大
+    var max1 = Math.max.call(null, ...arr);  // ... 表示传入任何值都加入到arr中
+    var max2 = Math.max.apply(null, arr);
+    // 取最小
+    var min1 = Math.min.call(null, ...arr);
+    var min2 = Math.min.apply(null, arr);
+
+    console.log("最大值 --- ", max1, max2)
+    console.log("最小值 --- ", min1, min2)
+
+    // 取数组对象中age 最大的
+    var arr = [
+        {
+            name: 2,
+            age: 2
+        },
+        {
+            name: 1,
+            age: 1
+        },
+        {
+            name: 3,
+            age: 3
+        }
+    ]
+
+    arr.sort(function (a, b) {
+        return a.age - b.age;
+    })
+
+    console.log("数组对象中age最小的是 ", arr[0])
+    console.log("数组对象中age最大的是 ", arr[arr.length - 1])
+
+    /**
+        原生js 实现call
+        https://www.jianshu.com/p/a94227977738
+        实现思路
+        首先，判断调用mycall的是不是函数，如果不是，则直接抛出异常；
+        接着，判断是否传入了第一个参数context，也就是要指定的this值，如果没有传入，则默认为window全局对象；
+        然后，谁将来调用mycall，那么this就是谁，将其赋给context.fn;
+        然后，通过参数伪数组将context后面的参数取出来,并传给context.fn获得执行结果result;
+        最后，删除掉context.fn，并将result返回；
+    **/
+    Function.prototype.myCall = function (context) {
+        if (typeof this !== "function") {
+            throw new TypeError("Error")
+        }
+
+        if (context !== null || context !== undefined) {
+            context = Object(context)
+        } else {
+            context = window
+        }
+
+        context.fn = this;
+        let args = [...arguments].slice(1);
+        let re = context.fn(...args);
+        delete context.fn;
+        return re;
+    }
+
+    /**
+       原生JS实现apply
+    **/
+    Function.prototype.myApplay = function (context) {
+        if (typeof this != "function") {
+            throw new TypeError("Err")
+        }
+
+        if (context !== null || context !== undefined) {
+            context = Object(this)
+        } else {
+            context = window
+        }
+
+        context.fn = this;
+        let re;
+        // 判断是否有第二个参数
+        if (arguments[1]) {
+            re = context.fn(...arguments[1]); // 有的话则将第二参数传给 fn  ...的意思是将参数以，1，2，3，这种方式传递
+        } else {
+            re = context.fn()
+        }
+        delete context.fn
+        return re
+    }
+
+    var personObj = {
+        name: 'Abiel'
+    }
+
+    function sayHi(age, sex) {
+        console.log(this.name, age, sex);
+    }
+    // sayHi.myCall(personObj, 25, '男'); // Abiel 25 男
+    sayHi.myApplay(personObj, [25, '男']); // Abiel 25 男
+
+    // 冒泡排序 双循环 拿相邻的两个数进行比较。如果第一个比第二大 则交换位置。
+    function bSort(arr) {
+        for (let i = 0; i < arr.length; i++) {
+            for (let j = 0; j < arr.length; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    let item = arr[j];
+                    arr[j] = arr[j + 1]
+                    arr[j + 1] = item;
+                }
+            }
+        }
+        return arr;
+    }
+
+    // 选择排序 双循环 取出某个数和后面的数比较 如果前面大于后面的就交换位置
+    function fnSort(arr) {
+        let t;
+        for (let i = 0; i < arr.length - 1; i++) {
+            for (let j = i; j < arr.length; j++) {
+                if (arr[i] > arr[j]) {
+                    t = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = i
+                }
+            }
+        }
+        return arr;
+    }
+    console.log("选择排序 --- ", fnSort([2, 7, 1, 55, 58]))
+
+    // 不需要借助第三个临时变量，实现两个变量的交换:
+    var a = 19;
+    var b = 30;
+    a = a + b; //49
+    b = a - b; // 19
+    a = a - b; // 30
+    console.log(a);
+    console.log(b);
+
+    /** 
+        数组去重复  字符串去重复
+        1.创建数组，双重循环。第二层循环的j 要等于 i。因为要一个一个向下对比。
+        2.最后要j-- 因为不能越过元素
+        拿第一个元素和后面单元素一一对比。 相等的删除掉原数组中的元素。
+    **/
+    var str = "aaabccdeeeeeeff";
+    var str1 = str.split("");
+    var arr = [];
+    for (let i = 0; i < str1.length; i++) {
+        arr.push(str1[i])
+        let content = 1;
+        for (let j = i; j < str1.length; j++) {
+            if (str1[i] == str1[j + 1]) {
+                content++; // 累计出现次数
+                str1.splice(j + 1, 1);
+                j--
+            }
+        }
+    }
+    console.log("字符串去重复 ", arr)
+    var a = [1, 13, 24, 11, 11, 14, 1, 2];
+    // a.sort(function (n1, n2) {
+    //     return n1 - n2;
+    // });
+    var b = [];
+    for (i = 0; i < a.length; i++) {
+        b.push(a[i]);
+        var count = 1;
+        for (k = i; k < a.length - 1; k++) {
+            if (a[i] == a[k + 1]) {
+                count++;
+                a.splice(k + 1, 1);
+                k--;
+            }
+        }
+    }
+    console.log("数字去重", b);
+
+
+    // 算出下列数组a中元素的总合数
+    var a = [1, 2, 3, 4];
+    var count = 0;
+    for (let i = 0; i < a.length; i++) {
+        count = count + a[i]
+    }
+    console.log("count --- >", count);
+
+    // 移除下列数组a中等于2的元素，不能修改原数组。返回新的数组
+    var a = [1, 2, 3, 4, 2];
+    var i = 2;
+    var newArr = a.filter(function (item) {
+        return item != 2;
+    })
+    console.log("原数组a --- >", a)
+    console.log("过滤后的数组 --- >", newArr)
+
+    var newArr = [];
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] != 2) {
+            newArr.push(a[i])
+        }
+    }
+    console.log("原数组a --- >", a)
+    console.log("过滤后的数组 --- >", newArr)
+
+    // 移除数组 arr 中的所有值与 item 相等的元素，直接在给定的 arr 数组上进行操作，并将结果返回
+    var a = [1, 2, 2, 3, 4, 2, 2], b = 2;
+    // function removeWithoutCopy(arr, item) {
+    //     while (arr.indexOf(item) != -1) {
+    //         arr.splice(arr.indexOf(item), 1)
+    //     }
+    //     return arr;
+    // }
+    // console.log(removeWithoutCopy(a, b))
+
+    while (a.indexOf(2) != -1) {
+        a.splice(a.indexOf(2), 1)
+    }
+    console.log("a -- >", a)
+
+    // 在数组 arr 末尾添加元素 item。不要直接修改数组 arr，结果返回新的数组
+    var arr = [1, 2, 3, 4], item = 10;
+    var newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+        newArr.push(arr[i])
+    }
+    newArr.push(item)
+    console.log("newArr --- >", newArr)
+
+    // 统计一个字符串出现最多的字母  先算出所有字符出现的次数， 在算出出现最多次数的元素  核心charAt
+    var str = "gffhghjllyesdfffnmfffssssffffjjffff";
+    function findMaxStr(str) {
+        if (str.length == 1) {
+            return str;
+        }
+
+        // 统计出每个字母出现的次数
+        let maxObj = {};
+        for (let i = 0; i < str.length; i++) {
+            if (maxObj[str.charAt(i)]) {
+                maxObj[str.charAt(i)] += 1;
+            } else {
+                maxObj[str.charAt(i)] = 1;
+            }
+        }
+
+        // 统计出出现次数最多的字符
+        let maxNum = 1;
+        let maxKey = "";
+        for (let key in maxObj) {
+            if (maxObj[key] > maxNum) {
+                maxNum = maxObj[key];
+                maxKey = key
+            }
+        }
+
+        return {
+            maxKey: maxKey,
+            maxNum: maxNum,
+            maxObj: maxObj
+        }
+    }
+    console.log("findMaxStr --- ", findMaxStr(str))
+
+    /* 函数的防抖 
+    https://www.jianshu.com/p/b7b698db8352
+    https://www.jianshu.com/p/f9f6b637fd6c
+    *   原理: 当被调用N毫秒后才被执行，若在这N毫秒内又被调用则重新计算执行时间（也就是永远只执行最后的）
+    *   例如 
+        1.搜索框搜索输入。只需用户最后一次输入完，再发送请求
+        2.手机号、邮箱验证输入检测 与后台交互查看是否被占用
+        3.如果使用input事件实时监听用户每输入一个字符就交互一次后台。这样的消耗太大了。所以用函数防抖可以解决
+    *   是函数在特定的时间内不被再调用后执行
+    */
+    function toStr() {
+        console.log("onresize -- ")
+    }
+
+    function antiShake(fn, context) {
+        clearTimeout(fn.timer);
+        fn.timer = setTimeout(() => {
+            fn.call(context)
+        }, 500);
+    }
+
+    window.onresize = function () {
+        antiShake(toStr, window)
+    }
+
+    /**
+    *   函数节流
+    *   是确保函数特定的时间内至多执行一次 
+    *   例如:
+    *   1.高频点击提交，表单重复提交
+    */
+    // document.querySelector('.box').addEventListener('mouseenter', function () { // mouseenter 妹o森特 穿过元素事件
+    //     console.log('鼠标进来啦')
+    // })
+    const throttle = (func, wait) => {
+        let timer;
+        return () => {
+            if (timer) {
+                return;
+            }
+
+            timer = setTimeout(() => {
+                func();
+                timer = null;
+            }, wait);
+        };
+    };
+
+
+</script>
+
+<body>
+    <h1>js常用方法总结</h1>
+</body>
+
+</html>

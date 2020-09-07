@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>VUE常用方法总结</title>
+    <style>
+    </style>
+</head>
+<script>
+    /**
+     *  https://segmentfault.com/a/1190000016344599
+        组件之间的传值 : https://blog.csdn.net/weihaifeng163/article/details/88338822
+        1.父组件向子组件传值
+            1.在html标签中 <my-assembly :key="{{value}}"></my-assembly>
+            2.在子组件中利用props接值
+            props: {
+                key: {
+                    type: "String"
+                }
+            }
+        2.子组件向父组件传值
+            1.在子组件中利用$emit
+            <buttion @click="toSubPageData"></buttion>
+            function toSubPageData() {
+                this.$emit("myEvent", "这是参数")
+            }
+            2.在父组件里接收事件
+            <my-assembly :key="{{value}}" @myEvent=""onData></my-assembly>
+            function onData(value) {
+                console.log("value --- >", value)
+            }
+        3.非组件之间的传值
+            1.利用中继器来实现传值
+                1.在src下创建一个eventBus.js
+                2.导入vue  improt Vue from 'vue'
+                3.创建vue实例  const vue = new Vue()
+                4.导出vue export default vue
+            2.A组件中
+                1.导入envetBus improt eventBus from "./eventBus"
+                2.修改事件传输
+                    <div @click="onToBpage"></div>
+                    function onToBpage() {
+                        eventBus.$emit("myEvent", "数据")
+                    }
+            3.B组件中
+                1.导入envetBus improt eventBus from "./eventBus"
+                2.修改事件传输
+                    在created中 eventBus.$on("myEvent", function(value) {
+                        console.log("value --- >", value)
+                    })
+
+        4.sessionSrorage缓存传值
+            利用seesionSrorage.setItem("key", value) 缓存数据
+            利用seesionSrorage.getItem("key") 得到缓存的数据
+
+        5.路由
+            const router = new VueRouter({
+                routes: [
+                    { path: '/a', redirect: '/b' },
+                    { 
+                        path: '/b', component: B,
+                        children: [
+                            {path: '/c', component: C}
+                        ]
+                    }
+                ]
+            })
+            path: 链接地址
+            redirect: 重定向到其他组件
+            component: 指定的组件
+            components: 命名试图。 在一个页面使用多个router-view显示多个试图
+                <router-view> : 显示当先路由地址对应的组件内容，
+                        <router-view class="main" name="header"></router-view>
+                        <router-view class="main"></router-view><!--name省略表示name='default'--> (滴否特)
+                        <router-view class="main" name="footer"></router-view>
+                        const router = new VueRouter({
+                            linkActiveClass: "activeClass", // 全局配置链接激活时的样式
+                            routes: [
+                                {
+                                    path: '/',
+                                    components: {
+                                       header: Header,
+                                       default: Default, //默认省略不写name的情况
+                                       footer: Footer
+                                    }
+                                }
+                            ]
+                        })      
+            children: 来实现路由的嵌套
+
+            参数跳转传值
+                <router-link>元素使用，它默认渲染为一个a标签
+                    to（必选参数）: 表示目标路由的链接
+                    tag: 默认是a 想渲染成什么标签就写什么标签
+                    active-class: 选中的样式 (哎kt五)
+                    exact: 精准匹配 (Aks 爱克t) 
+                    event: 导航事件
+                    replace: 当点击时，会调用 router.replace() 而不是 router.push()，于是导航后不会留下 history 记录。
+                1.使用字符串则不需要修改路由的path
+                    <router-link to="/login?id=10">登录</router-link>
+                    使用query接收参数 '<h2>登录----{{$route.query.id}}</h2>'
+                2.使用params方式传递参数。
+                    1.A组件中
+                    <router-link to="{name: 'bpage', params={id: 1, sex: 2}}">test</router-link>
+                    2.B组件中使用params来接收
+                    this.$router.params.name 得到router-link传递的名称参数
+                    this.$router.params.sex
+                3.路由的方法
+                    this.$router.push 跳转到指定的路由，并且向history中添加一条记录，可以返回上一页有历史记录
+                    this.$router.replace 跳转到指定url路径，但是history栈中不会有记录，点击返回会跳转到上上个页面
+                    this.$router.go(n) 向前或者向后跳转n个页面，n可为正整数或负整数 
+        6.axios:
+                1.创建axios
+                    let instance = axios.create({
+                        headers: {
+                            'content-type': 'application/x-www-form-urlencoded'
+                        }
+                    })
+                2.http request 拦截器
+                    instance.interceptors.request.use(
+                        config => {
+                            if (store.state.token) { // 判断是否存在token，如果存在的话，则每个http header都加上token
+                                config.headers.authorization = store.state.token  //请求头加上token
+                            }
+                            return config
+                        },
+                        err => {
+                            return Promise.reject(err)
+                        }
+                    )
+                3. http response 拦截器
+                    instance.interceptors.response.use(
+                        response => {
+                            //拦截响应，做统一处理 
+                            if (response.data.code) {
+                                switch (response.data.code) {
+                                    case 1002:
+                                    store.state.isLogin = false
+                                    router.replace({
+                                        path: 'login',
+                                        query: {
+                                            redirect: router.currentRoute.fullPath
+                                        }
+                                    })
+                                }
+                            }
+                            return response
+                            },
+                        //接口错误状态处理，也就是说无响应时的处理
+                        error => {
+                            return Promise.reject(error.response.status) // 返回接口返回的错误信息
+                        }
+                    )  
+                4. axios修改header
+                        1.通过 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded' （滴否思）
+                        2.通过 axios.post(url, obj, {
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            }
+                        })
+                        3.通过 this.axios({
+                             method: "POST",
+                             url: url,
+                             data: params,
+                             headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                             }
+                        })
+                        4.通过request 拦截器  axios.interceptors.response.use 第一个参数config
+                            config.headers.authorization = store.state.token  //请求头加上token
+                        5.Content-type 
+                            application/json' 以JSON方式传递
+                            application/x-www-form-urlencoded 以键值对方式传递
+                            multipart/form-data ： 以form表单形式传递
+        6.vuex传值
+            this.$store.dispatch("handleCity", "北京"); 提交到actions中
+        7.vue中怎么使用自定义组件
+            第一步：在components目录新建你的组件文件（indexPage.vue），script一定要export default {}
+            第二步：在需要用的页面（组件）中导入：import indexPage from '@/components/indexPage.vue'
+            第三步：注入到vue的子组件的components属性上面,components:{indexPage}
+            第四步：在template视图view中使用，
+            例如有indexPage命名，使用的时候则index-page 
+        7.子组件监听父组件的值 同步更新数据
+            在子组件中利用watch监听数据变化
+            watch: {
+                data: {
+                    immediate: true,
+                    handler(newData, oldData) {
+                        this.items = val
+                    }
+                }
+
+            }
+        8.watch监听的视同
+            immediate: (因妹滴儿特) 表示在首次绑定的时候，是否执行handler，
+                                  true表示在首次绑定时就执行handler
+                                  false表示在数据变化时在执行handler
+            deep:深度监听，可以监听到对象中的属性变化
+        7.computed和watch的区别  
+            1.computed 计算属性只有在它的相关依赖发生属性改变时才会重新求值，而且计算属性是基于他所以依赖的属性进行缓存的。
+                       如有它所依赖的属性没有改变。就不会触发他的方法体
+            2.watch 是监听一个特定的值，当该值变化时执行特定函数。
+
+        8.vuex  
+            state
+            Vuex 使用单一状态树,即每个应用将仅仅包含一个store 实例，但单一状态树和模块化并不冲突。存放的数据状态，不可以直接修改里面的数据。
+            mutations
+            mutations定义的方法动态修改Vuex 的 store 中的状态或数据。
+            getters
+            类似vue的计算属性，主要用来过滤一些数据。
+            action
+            actions可以理解为通过将mutations里面处里数据的方法变成可异步的处理数据的方法，简单的说就是异步操作数据。view 层通过 store.dispath 来分发 action。
+        
+        9.vue的生命周期   
+            vue实例从创建到销毁的过程，就是生命周期，从开始创建、初始化数据、编译模板、挂载DOM、渲染DOM、更新渲染、销毁等一系列过程。称为vue的生命周期
+            beforeCrate(创建之前)： 处在数据观测、初始化事件、阶段
+            created(创建后)： 完成了数据观测、属性和方法的运算、初始化事件、$el属性还没显示出来
+            beforeMount(载入前)：在挂载开始前被调用，相关的render函数被调用，完成编译模板。把data中的数据和模板生成html。但还没挂载到html上
+            mounted(载入后)：用上面编译好的html内容替换el属性指向的DOM对象，完成模板的html渲染到html页面上。此过程中进行ajax交互
+            beforeUpdate(更新前)：在数据更新之前调用，可以在改钩子函数中进一步更改状态
+            updated()：由于数据更改导致的虚拟DOM重新渲染和打补丁之后调用。组件DOM已经更新，所以可以执行依赖于Dom的操作。该钩子函数在服务于期渲染期间不被调用
+            beforeDestroy(销毁前)：在实例销毁之后调用。实例仍然完全可用
+            destroyed(销毁后)：在实例销毁后调用，调用后，所有时间监听器会被移除，所有子实例也会被销毁。该钩子函数在服务器渲染期间不被调动
+        
+        10.vue的双向数据绑定原理  
+            vue实现数据双向绑定主要是，采用了数据劫持 集合 发布者与订阅者模式。
+            通过Object.defineProperty() 来劫持各个属性的setter、getter,在数据变化时候发布消息给订阅者，触发对应的监听回调。当把一个普通
+            的javascript对象传给Vue实例来作为他的data选项时候。Vue将遍历他的属性，用object.defineProperty将它们转为getter  setter。
+            在属性被访问和修改时通知变化
+            vue的数据双向绑定将MVVM作为数据绑定的入口，整合Observer（观察器）,Compile(编译器)和Watcher(监听器)三者。通过Observer来监听自己的model的数据变化。
+            通过Compile来解析编译模板指令{{}}，最终利用watcher搭起observer和Compile之间的通信桥梁，达到数据变化 - 视图更新 - 视图交互变化
+        
+        11.webstorage本地存储
+            1.localStorage生命周期是永久，这意味着除非用户显示在浏览器提供的UI上清除localStorage信息，
+                否则这些信息将永远存在。存放数据大小为一般为5MB,而且它仅在客户端（即浏览器）中保存，不参与和服务器的通信
+            2.sessionStorage仅在当前会话下有效，关闭页面或浏览器后被清除。存放数据大小为一般为5MB,而且它仅在客户端（即浏览器）中保存，
+                不参与和服务器的通信。源生接口可以接受，亦可再次封装来对Object和Array有更好的支持
+            localStorage和sessionStorage只能存储字符串类型，对于复杂的对象可以使用JSON对象的stringify和parse来处理
+            localStoragese：常用于长期登录（+判断用户是否已登录），适合长期保存在本地的数据，
+            sessionStorage：敏感账号一次性登录
+
+        12.vue优化 https://www.jianshu.com/p/41075f1f5297 
+            1.上线的时候屏蔽sourceMap。对提示信息已经错误信息进行屏蔽
+                在build对象中productionSourceMap 修改成false
+            2.对项目代码中的JS/CSS/SVG(*.ico)文件进行gzip压缩
+                npm install --save-dev comproession-webpack-plugin 在productionGzipExtensions['js', 'css', 'svg']设置要压缩的东西
+            3.v-show 和 v-if选择调用
+                v-if是懒加载、挡状态为true时才会加载。并且为false时不会占用布局空间；
+                v-show是无乱状态是true还是false.都会进行渲染
+                在项目中中不需要权限的展示隐层。频繁调用的可以用用v-show 可以减少系统切换开销
+            4.为列表数据进行遍历渲染时，为每一项item设置唯一的key。方便vue.js内部机制快速找到该item
+        
+        13.vue项目中，定义并使用 全局变量，全局函数 https://blog.csdn.net/qq_30669833/article/details/81706217
+            1. 单独新建一个全局变量模块文件，模块中定义一些变量初始状态，用export default 暴露出去。
+            2. 在main.js中引入，并通过Vue.prototype挂载到vue实例上面。供其他模块文件使用；
+            3. 或者直接引入到需要的模块文件中使用；
+
+        14.vue解決跨域
+        https://www.cnblogs.com/ldlx-mars/p/7816316.html
+        https://segmentfault.com/a/1190000011715088
+
+        15.小程序登錄流程 https://www.jianshu.com/p/521f79977b7e
+**/
+
+    var obj = {};
+
+    Object.defineProperty(obj, "onText", {
+        get() {
+            return obj;
+        },
+        set(newDate) {
+
+        }
+    })
+</script>
+
+<body>
+    <h1>VUE常用方法总结</h1>
+
+    <input type="text" id="onText">
+</body>
+
+</html>

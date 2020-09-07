@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>git常用命令总结</title>
+    <style>
+    </style>
+</head>
+<script>
+  /**
+    git clone (克隆)
+
+    git remote add origin URL （git@192.168.1.177:xjl/wx-appraisal.git） // 更换项目地址
+    git remote -v 查看当前项目地址
+    git remote remove origin URL 删除掉现在地址
+
+    git branch -v 查看分支  
+    git branch -d name 删除分支
+    git checkout -b name 切换分支 并创建
+    git merge name 合并指定分支到当前分支
+    git fetch 远程抓取分支（在主干上没有分支的时候执行）
+
+    git status — 查看状态
+    git stash —  本地缓存空间   
+    git stash pop —  将本地缓存文件与线上文件合并
+    git pull origin marge 向服务器主版本库推送文件 
+    git add — 加入
+    git commit — 提交
+    git reset 返回
+    git chekcout 创建分支和切换分支
+
+    查看历史提交版本：
+
+    1.git log 查看历史所有版本信息
+    
+    2.git log -x 查看最新的x个版本信息
+
+    3.git log -x filename查看某个文件filename最新的x个版本信息（需要进入该文件所在目录）
+
+    4.git log --pretty=oneline查看历史所有版本信息，只包含版本号和记录描述
+
+    回滚版本：
+
+    1.git reset --hard HEAD^，回滚到上个版本
+
+    2.git reset --hard HEAD^~2，回滚到前两个版本
+
+    3.git reset --hard xxx(版本号或版本号前几位)，回滚到指定版本号，如果是版本号前几位，git会自动寻找匹配的版本号
+
+    4.git reset --hard xxx(版本号或版本号前几位) filename，回滚某个文件到指定版本号（需要进入该文件所在目录）
+  **/
+</script>
+
+<body>
+    <h1>git常用命令总结</h1>
+</body>
+
+</html>

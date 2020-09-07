@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>vue 基础部分</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <span>姓名：{{person.name}}</span>
+        <span>性别：{{person.sex}}</span>
+    </div>
+</body>
+
+<script>
+    /***
+     *  vue 官网： https://cn.vuejs.org/v2/guide/installation.html
+     * 
+     *  1.el提供一个页面上已经存在的DOM元素 作为vue的挂载对象
+     *  2.常用指令
+            绑定语法：
+     *          v-pre: 正常显示内容 例如要显示 {{ abc }} 花括号会正常渲染
+     *          v-html:
+     *  3.
+     * 
+     * 
+     */
+    new Vue({
+        el: '#app',
+        data: {
+            person: {
+                name: '测试效果',
+                sex: '1',
+            }
+        }
+    }) 
+</script>
+</html>

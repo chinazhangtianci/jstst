@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>前端优化方法总结</title>
+    <style>
+    </style>
+</head>
+<script>
+   /**
+        1.减少请求量
+            合并多个css文件和js文件。利用css Sprites整合图像
+        2.减少DNS查找
+            一个网站里面使用至少2个域，但不多于4个域
+        3.减少DOM元素数量
+            页面里存在大量的DOM元素。会导致javascript遍历DOM的效率变慢
+        4.减少iframe的数量
+        5.css代码房贷页面顶部，使用<link>代替@import
+        6.将js脚本放在页面底部
+        7.缩小css与js 压缩、去除重复脚本
+        8.优化图片压缩、
+
+        兼容性问题: https://www.jianshu.com/p/6afd596440bb
+            1.ie下的 event 事件对象 只能通过 window.event 获取。不能通过参数的形式传递
+            所以在写的时候需要判断一下函数参数event
+            function a(e) {
+                e = e ? e : window.event
+            }
+
+            2.不同浏览器的 margin 和 padding 不同 
+                css里增加通配符*{margin：0；padding：0}
+
+            3.IE六的双边距问题，设置了float, 同事在设置magrin，就会出现边距问题
+
+            4.cursor：hand显示手型在safari上不支持
+                统一使用cursor：pointer
+
+            5.event.srcElement问题
+                IE下event对象只有srcElement属性，没有target属性， 火狐下event有target属性. 但是没有srcElement属性
+                解决方案， srcObj = event.srcElement?event.srcElement:event.target;
+            
+            6.事件绑定
+                IE dom.attachEvent();
+                其他浏览器：dom.addEventListener();
+            
+            7.innerText在IE中能正常工作，但在FireFox中却不行.
+
+           
+   **/
+</script>
+
+<body>
+    <h1></h1>
+</body>
+
+</html>

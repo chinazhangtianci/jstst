@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>js原型、原型链、继承概念总结</title>
+    <style>
+    </style>
+</head>
+<script>
+    /**
+    ** 资料： https://www.cnblogs.com/Yellow-ice/p/10473176.html
+    ** js中，原型，原型链和继承是三个很重要的概念
+    ** 学过java的同学应该都知道，继承是java的重要特点之一，许多面向对象的语言都支持两种继承方式：接口继承和实现继承，接口继承只继承方法签名，
+    ** 而实现继承则继承实际的方法，在js中，由于函数没有签名，因此只支持实现继承，而实现继承主要是依靠原型链来实现的，那么，什么是原型链呢
+
+    ** 构造函数，原型和实例之间的关系
+    ** 当我们创建一个构造函数时，构造函数会获得一个prototype属性，该属性是一个指针，指向一个原型对象，原型对象包含一个constructor属性，（肯死踹个特）
+    ** 该属性也是一个指针，指向构造函数，而当我们创建构造函数的实例时，该实例其实会获得一个[[Prototype]]属性，指向原型对象
+
+    ** 原型链
+    ** 如果我们让原型对象等于另一个构造函数的实例，此时的原型对象就会获得一个[[Prototype]]属性，该属性会指向另一个原型对象，如果另一个原型对象又是另一个构造函数的实例，
+    ** 这个原型对象又会获得一个[[Prototype]]属性，该属性又会指向另一个原型对象，如此层层递进，就构成了实例与原型的链条，这就是原型链
+    **/
+
+
+
+    function SubType() { } // 构造函数 SubType.prototype是原型对象
+
+    var instance = new SubType(); // instance是实例、包含[[Prototype]]属性
+
+    // 继承的方式  
+    // 1. 原型链继承方式
+    function SuperType() {
+        this.property = true;
+    }
+    SuperType.prototype.getSuperValue = function () {
+        return this.property;
+    }
+    function SubType() {
+        this.subproperty = true;
+    }
+    SubType.prototype = new SuperType();      //  实现继承
+    SubType.prototype.getSubValue = function () {
+        return this.subprototype;
+    }
+
+    var instance = new SubType();
+    console.log(instance, instance.getSuperValue());      //  true
+
+    // 优缺点： 最主要的问题是包含引用类型值的原型, 因为包含引用类型值的原型属性会被所有的实例共享, 而在通过原型来实现继承的时候, 
+    // 原型实际变成了另外一个函数的实例(这里边就有可能存在引用类型) 例如
+    // 如果我们使用原型链继承，那么instance1和instance2将会共享colors属性，因为colors属性存在于SubType.prototype中
+    function Parent() {
+        this.newArr = ["heyushuo", "kebi"];
+    }
+
+    function Child() {
+        this.name = "kebi";
+    }
+    Child.prototype = new Parent();
+    var Person1 = new Child();
+    Person1.newArr.push("kuli");
+    console.log(Person1.newArr); // ["heyushuo","kebi","kuli"]
+    var Person2 = new Child();
+    console.log(Person2.newArr); // ["heyushuo","kebi","kuli"]
+
+    // 2. 借用构造函数实现继承  为了解决原型中包含引用类型继承所带来的问题 该方法主要是利用call 和 apply方法 在子类构造器中调用超类型构造函数解决该问题
+    // 通过使用call()方法，我们实际上是在新创建的SubType实例的环境下调用了SuperType的构造函数，因此，colors属性是分别存在instance1和instance2实例中的，修改其中一个不会影响另一个
+    function SuperType() {
+        this.colors = ["red", "blue", "green"]
+    }
+    function SubType() {
+        SuperType.call(this);
+    }
+
+    var instance1 = new SubType();
+    var instance2 = new SubType();
+    instance2.colors.push("black");
+    console.log(instance1.colors, instance1);      //  red,blue,green
+    console.log(instance2.colors);      //  red,blue,green,black
+
+    // 3组合继承 避免了原型链和借用构造函数的缺陷，融合了它们的优点，现在已经成为js中最常用的继承方法  
+    // 可以通过在原型上定义方法实现函数的复用，又能够保证每个实例都有自己的属性
+    function SuperType(name) {
+        this.name = name;
+        this.colors = ["red", "blue", "green"]
+    }
+    SuperType.prototype.sayName = function () {
+        console.log(this.name);
+    }
+    function SubType(name, age) {
+        SuperType.call(this, name);
+        this.age = age;
+    }
+    SubType.prototype = new SuperType();
+    SubType.prototype.constructor = SubType;
+    SubType.prototype.sayAge = function () {
+        console.log(this.age);
+    }
+
+    var instance1 = new SubType("Nicholas", 29);
+    var instance2 = new SubType("Greg", 27);
+    instance1.colors.push("black");
+    console.log(instance1.colors);       //  red,blue,green,black
+    console.log(instance2.colors);       //  red,blue,green
+    instance1.sayName();                  //  Nicholas
+    instance2.sayName();                  //  29
+    instance1.sayAge();                     //  Greg
+    instance2.sayAge();                     //  27  
+
+</script>
+
+<body>
+    <h1>js原型、原型链、继承概念总结</h1>
+</body>
+
+</html>
